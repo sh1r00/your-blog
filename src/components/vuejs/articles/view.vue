@@ -1,43 +1,37 @@
 <template>
-  <v-container
-    class="fluid px-0"
-  >
-    <v-layout column>
+  <v-layout column class="pa-4">
+      <v-col>
       <v-flex xs12>
         <v-flex xs10 offset-xs1 class="pb-3">
           <div class="display-4"> {{article.title}} </div>
         </v-flex>
       </v-flex>
-    </v-layout>
-    <v-layout>
+    </v-col>
+    <v-col>
       <v-flex xs12>
         <v-flex justify="center" xs10 offset-xs1 class="pb-3">
           <div class="display-1"> {{article.subtitle}} </div>
         </v-flex>
       </v-flex>
-    </v-layout>
-    <v-layout row wrap v-for="(item, idx) in article.items" :key="idx" my-3>
+    </v-col>
+    <v-col row wrap v-for="(item, idx) in article.items" :key="idx" my-3>
       <p
         v-bind="{ [`xs${item.flex}`]: true, [`offset-xs${item.offset}`]: true }"
         v-html="item.template">
         {{ item.template }}
       </p>
-    </v-layout>
-  </v-container>
+    </v-col>
+  </v-layout>
 </template>
 <script>
 
 export default {
   name: 'Article',
   created () {
+    return this.$store.dispatch('getArticle', this.$route.params.id)
   },
   mounted () {
-    this.$store.dispatch('getArticle', this.$route.params.id)
-      .then((res) => {
-        this.article.title = res.title
-        this.article.subtitle = res.subtitle
-        this.article.items = res.sections
-      })
+    return this.$store.getters.currentCard
     // console.log(this.$route.params)
   },
   data: () => ({
@@ -84,6 +78,15 @@ export default {
       ]
     }
   }),
+  computed: {
+    currentCard () {
+      this.article.title = this.currentCard.title
+      this.article.subtitle = this.currentCard.subtitle
+      if (this.currentCard.sections) {
+        this.article.items = this.currentCard.sections
+      }
+    }
+  },
   methods: {
     toRoute (rname, rparams = {}, query = {}) {
       this.dialog = true

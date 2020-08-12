@@ -24,6 +24,7 @@ export const store = new Vuex.Store({
     selectedTopics: [],
     filteredCards: [],
     topics: [],
+    currentCard: {},
     editCard: {},
     errorMsg: null,
     successMsg: null,
@@ -168,6 +169,9 @@ export const store = new Vuex.Store({
     cards (state) {
       return state.cards
     },
+    currentCard (state) {
+      return state.currentCard
+    },
     filteredCards (state) {
       return state.filteredCards
     },
@@ -292,6 +296,9 @@ export const store = new Vuex.Store({
       const userIndex = state.userCards.findIndex(e => e.id === payload.id)
       state.cards[index] = payload
       state.userCards[userIndex] = payload
+    },
+    SET_CURRENT_CARD (state, payload) {
+      state.currentCard = payload
     },
     DELETE_CARD (state, payload) {
       const index = state.cards.findIndex(e => e.title === payload.title)
@@ -482,7 +489,8 @@ export const store = new Vuex.Store({
       context.commit('DELETE_CARD', payload)
     },
     getArticle (context, payload) {
-      return context.state.cards.find(el => el.id === payload)
+      const currentCard = context.state.cards.find(el => el.id === payload)
+      context.commit('SET_CURRENT_CARD', currentCard)
     }
   }
 })

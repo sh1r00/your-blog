@@ -1,28 +1,30 @@
 <template>
-  <v-layout>
+  <div>
     <sign-in v-if="user === null" />
-    <v-col v-else-if="user">
-      <v-spacer />
-      <v-btn width="120px" style="margin-left: calc(100% - 100px);" to="/article/create">
-        Create
-        <v-icon>
-          mdi-plus
-        </v-icon>
-      </v-btn>
-      <v-row>
-        <v-flex xs10 sm9 v-if="!isList" >
-          <v-card>
-            <grid-cards :cards="userCards" :edit="true" />
-          </v-card>
-        </v-flex>
-        <v-flex xs10 sm9 v-else>
-          <v-card>
-            <list-cards :cards="userCards" :edit="true" />
-          </v-card>
-        </v-flex>
-      </v-row>
-    </v-col>
-  </v-layout>
+    <v-row v-else-if="user" class="mx-12">
+      <v-col>
+        <v-spacer />
+        <v-btn width="120px" style="margin: 2em 0 2em calc(100% - 100px);" to="/article/create">
+          Create
+          <v-icon>
+            mdi-plus
+          </v-icon>
+        </v-btn>
+        <v-row>
+          <v-flex xs10 sm9 v-if="!isList" >
+            <v-card>
+              <grid-cards :cards="userCards" :edit="true" />
+            </v-card>
+          </v-flex>
+          <v-flex xs10 sm9 v-else>
+            <v-card>
+              <list-cards :cards="userCards" :edit="true" />
+            </v-card>
+          </v-flex>
+        </v-row>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'

@@ -3,98 +3,7 @@
     id="inspire"
     style="background-color: #ffffff !important;"
   >
-    <v-navigation-drawer
-      dark
-      app
-      floating
-      right
-      temporary
-      v-model="drawer"
-    >
-      <v-container grid-list-sm>
-        <v-layout row justify-center align-center>
-          <v-flex xs12>
-            <v-card text>
-              <v-card-title text>
-                <v-container grid-list-sm>
-                  <v-layout row wrap>
-                    <v-flex xs12
-                      align-center justify-center text-xs-center
-                    >
-                      <v-avatar
-                        tile="tile"
-                        size="75"
-                      >
-                        <img src="./assets/logo_only.png" alt="avatar">
-                      </v-avatar>
-                    </v-flex>
-                    <v-flex xs12
-                      align-center justify-center text-xs-center
-                      headline
-                    >
-                        <v-btn
-                          text
-                          to="/"
-                        >
-                          Your Blog
-                        </v-btn>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
-              </v-card-title>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-      <v-list>
-        <template >
-          <v-list-item v-for="(item, i) in items" :key="i"  >
-            <v-btn text  @click.stop="executeLink(item.link)">
-              <v-list-item-action>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ item.text }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-btn>
-            <v-list-item-action v-if="item.add">
-                <v-tooltip right>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon dark color="primary" v-bind="attrs" v-on="on" @click.stop="executeLink(item.add)">
-                      mdi-plus
-                    </v-icon>
-                  </template>
-                   <span>{{item.ttip}}</span>
-                </v-tooltip>
-            </v-list-item-action>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-action class="text-center">
-              <v-btn v-if="user" center color="accent--text" text @click="signOutUser">
-                Sign Out
-              </v-btn>
-              <v-btn v-else-if="!user" color="accent--text" to="/" text>
-                Sign In
-              </v-btn>
-            </v-list-item-action>
-          </v-list-item>
-        </template>
-        <v-spacer />
-        <v-list-item >
-          <v-list-item-action>
-            <v-icon>mdi-copyright</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>
-              Copyright {{ year }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        </v-list>
-    </v-navigation-drawer>
-
+    <nav-drawer :user="user" :toggleDrawer="drawer" :items="menuItems" :year="year" @sign-out-user="signOutUser" @close-nav-drawer="closeNavDrawer" />
     <v-app-bar dark class="primary">
       <v-toolbar-title class="mr-5 align-center">
         <v-btn text to="/"> Your Blog </v-btn>
@@ -102,7 +11,7 @@
       <v-spacer />
       <v-layout class="hidden-sm-and-down" row justify-center>
         <v-flex xs12 sm10 style="max-width: 750px">
-          <nav-bar />
+          <nav-bar :user="user" :menuItems="menuItems" @sign-out-user="signOutUser" />
         </v-flex>
       </v-layout>
       <v-spacer />
@@ -131,11 +40,13 @@
 
 
 <script>
-  import NavBar from './components/navBar.vue'
+  import NavBar from '@/components/nav/NavBar.vue'
+  import NavDrawer from '@/components/nav/NavDrawer.vue'
   import { mapGetters } from 'vuex'
   export default {
     components: {
-      NavBar
+      NavBar,
+      NavDrawer
     },
     created () {
       this.$store.dispatch('checkAuth')
@@ -156,7 +67,7 @@
       source: String
     },
     computed: {
-      items () {
+      menuItems () {
         let menu = [
           { icon: 'mdi-view-dashboard', text: 'Home', link: '/', add: 'create_article', ttip: 'Add Article' },
           { icon: 'mdi-book', text: 'Topics', link: '/topics' },
@@ -182,12 +93,11 @@
           isList: this.isList
         })
       },
-      executeLink (link) {
-        this.$router.push(link)
+      signOutUser () {
+        this.$store.dispatch('signOutUser', false)
         this.drawer = false
       },
-      signOutUser () {
-        this.$store.dispatch('signOutUser', this.user)
+      closeNavDrawer () {
         this.drawer = false
       }
     }
